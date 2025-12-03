@@ -1,6 +1,6 @@
 // loginPage.ts
 import { expect, Locator, Page } from '@playwright/test';
-import { AccessibilityHelper } from '../utils/AccessibilityHelper';
+import { AccessibilityHelper } from '../utils/accessibilityHelper';
 
 export class LoginPage {
   readonly page: Page;
