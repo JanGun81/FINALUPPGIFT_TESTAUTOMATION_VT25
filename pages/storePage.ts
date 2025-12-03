@@ -1,6 +1,6 @@
 // storePage.ts
 import { Page, Locator, expect } from '@playwright/test';
-import { AccessibilityHelper } from '../utils/AccessibilityHelper';
+import { AccessibilityHelper } from '../Utils/AccessibilityHelper';
 
 export class StorePage {
   readonly page: Page;
