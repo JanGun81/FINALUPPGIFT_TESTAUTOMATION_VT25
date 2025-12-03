@@ -1,5 +1,8 @@
 // storePage.ts
 import { Page, Locator, expect } from '@playwright/test';
+import AxeBuilder from '@axe-core/playwright';
+import { AccessibilityHelper } from '../Utils/AccessibilityHelper';
+import { access } from 'fs';
 
 export class StorePage {
   readonly page: Page;
@@ -16,6 +19,8 @@ export class StorePage {
   readonly nameResult: Locator;
   readonly addressResult: Locator;
   readonly closeButton: Locator;
+  readonly htmlElement: string;
+  private accessibilityHelper: AccessibilityHelper;
 
   constructor(page: Page) {
     this.page = page;
@@ -32,6 +37,8 @@ export class StorePage {
     this.nameResult = page.locator('#name');
     this.addressResult = page.locator('#address');
     this.closeButton = page.getByText('Close');
+    this.htmlElement = 'html';
+    this.accessibilityHelper = new AccessibilityHelper(page);
   }
 
   async selectProduct(productId: string, amount: string) {
@@ -67,7 +74,13 @@ export class StorePage {
     await expect(this.addressResult).toContainText(`It will be shipped to: ${address}`);
   }
 
+  async runAccessibilityTestStore2() {
+    // Page object for accessibility test for Store2 page (html language attribute)
+    return await this.accessibilityHelper.runAccessibilityScan(this.htmlElement);
+  }
+  
   async closeDialog() {
     await this.closeButton.click();
   }
 }
+

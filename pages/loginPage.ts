@@ -1,5 +1,6 @@
 // loginPage.ts
 import { expect, Locator, Page } from '@playwright/test';
+import { AccessibilityHelper } from '../Utils/AccessibilityHelper';
 
 export class LoginPage {
   readonly page: Page;
@@ -7,10 +8,12 @@ export class LoginPage {
   readonly passwordInput: Locator;
   readonly roleSelect: Locator;
   readonly loginButton: Locator;
+  readonly loginButtonSel: string;
   readonly urlLogin: string = 'https://hoff.is/login/';
   readonly urlStore: string = 'https://hoff.is/store2/';
   readonly errorMessage: Locator;
   readonly noFilledMessage: Locator;
+  private accessibilityHelper: AccessibilityHelper;
 
   constructor(page: Page) {
     this.page = page;
@@ -18,9 +21,10 @@ export class LoginPage {
     this.passwordInput = page.getByRole('textbox', { name: 'Password' });
     this.roleSelect = page.getByLabel('Select Role');
     this.loginButton = page.getByRole('button', { name: 'Login' });
+    this.loginButtonSel = 'button';
     this.errorMessage = page.getByText('Incorrect password');
     this.noFilledMessage = page.getByText('Please fill in all fields.');
-
+    this.accessibilityHelper = new AccessibilityHelper(page);
   }
 
   async goto() {
@@ -53,5 +57,9 @@ export class LoginPage {
     await expect(this.noFilledMessage).toBeVisible();
   }
   
+  async runAccessibilityScanButton() {
+    // Page object for accessibility test for login button (WCAG 2 AA color contrast)
+    return await this.accessibilityHelper.runAccessibilityScan(this.loginButtonSel);
+  }  
 
 }
