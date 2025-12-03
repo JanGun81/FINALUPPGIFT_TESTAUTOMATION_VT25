@@ -6,6 +6,16 @@ on:
     branches: [ main, master ]
   repository_dispatch:
     types: [ run_e2e ]
+  workflow_dispatch:
+    inputs:
+      suite:
+        description: 'which Test suites are you gonna run?'
+        required: true
+        default: 'gui'
+        type: choice
+        options:
+          - End-To-End
+          - API
 jobs:
   test:
     env:
