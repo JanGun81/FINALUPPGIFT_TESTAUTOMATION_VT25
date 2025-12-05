@@ -1,7 +1,9 @@
 import { request } from '@playwright/test';
 import { test, expect } from '../api.fixtures';
+import { StorePage } from '../../pages/storePage';
 
 test.describe('Store Product API Tests', () => {
+  let storePage: StorePage;
   test('Fetch product list', async ( {api, baseURL}) => {
     //Act
     const response = await api.get(`${baseURL}/product/list`);
@@ -44,4 +46,24 @@ test.describe('Store Product API Tests', () => {
         expect(data.price).toBe(price);
       }
     });
+
+  test('Buy two apples in GUI and validate', async ({ api, baseURL, page }) => {
+    //Get price for Apple from API
+    storePage = new StorePage(page);
+    const get_response = await api.get(`${baseURL}/price/1`);
+    const apple_price = (await get_response.json()).price;
+    console.log(`Price for Apple from API is: ${apple_price}`);
+    //Make a purchase for Apple in UI.
+    const response = page.goto(`https://hoff.is/store2`);
+    // purchase two apples
+    await storePage.selectProduct('1', '2');
+    await storePage.expectAddedToCart('Added 2 x Apple to cart.');
+    await storePage.proceedToCheckout();
+    // Verify that the total price in the UI matches the API price
+    const expected_total = apple_price * 2;
+    await storePage.fillCustomerDetails('API Tester', 'Test Address 123');
+    await storePage.confirmPurchase();
+    await storePage.expectCartItem(`2 x Apple - $${expected_total}`);
+    
+  });
 });
